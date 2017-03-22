@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <!-- 使Spring支持自动检测组件，如注解的 Controller -->
+    <context:component-scan base-package="com.concentration.controller"/>
+    <context:component-scan base-package="com.concentration.domain"/>
+    <context:component-scan base-package="com.concentration.domain.service"/>
+    <context:component-scan base-package="com.concentration.domain.service.impl"/>
+
+    <mvc:annotation-driven />
+
+    <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
+        <!--<property name="prefix" value="/WEB-INF/pages/"/>-->
+        <!--<property name="suffix" value=".ftl"/>-->
+    <!--</bean>-->
+
+    <!-- 设置上传文件的最大尺寸为10MB -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="1048576000"/>
+        <property name="maxInMemorySize" value="1024"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+    <!-- 支持返回json(避免IE在ajax请求时，返回json出现下载 ) -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="mappingJacksonHttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>
+    <bean id="mappingJacksonHttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/plain;charset=UTF-8</value>
+                <value>application/json;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+    <!-- 支持返回json -->
+
+    <!-- 启动 Spring MVC 的注解功能，完成请求和注解 POJO 的映射 -->
+    <!--<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>-->
+
+    <!-- 静态资源访问 -->
+    <!--<mvc:resources mapping="/resources/**" location="/resources"/>-->
+
+    <!-- 配置Freemarker屬性文件路徑 -->
+    <!--<bean id="freemarkerConfiguration"        class="org.springframework.beans.factory.config.PropertiesFactoryBean">-->
+        <!--<property name="location" value="classpath:conf/freemarker.properties" />-->
+    <!--</bean>-->
+
+    <!-- 配置freeMarker模板加載地址 -->
+    <bean id="freemarkerConfig"        class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <!-- 視圖解析器會在/WEB-INF/ftl/路徑下掃描視圖文件 -->
+        <property name="templateLoaderPath" value="classpath:/html/" />
+        <property name="freemarkerVariables">
+            <map>
+                <entry key="xml_escape" value-ref="fmXmlEscape" />
+            </map>
+        </property>
+        <property name="freemarkerSettings">
+            <props>
+                <prop key="locale">zh_CN</prop>
+                <prop key="defaultEncoding">UTF-8</prop>
+                <prop key="date_format">yyyy-MM-dd</prop>
+                <prop key="time_format">HH:mm:ss</prop>
+                <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+                <prop key="number_format">0.################</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape" />
+    <!-- 配置 freemakerView 解析器 -->
+    <bean id="freemakerViewResolver"        class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="viewClass"        value="org.springframework.web.servlet.view.freemarker.FreeMarkerView" />
+        <!-- 扫描ftl 文件 -->
+        <property name="contentType" value="text/html; charset=UTF-8" />
+        <property name="exposeRequestAttributes" value="true" />
+        <property name="exposeSessionAttributes" value="true" />
+        <property name="exposeSpringMacroHelpers" value="true" />
+        <property name="requestContextAttribute" value="request" />
+        <!-- 给视图解析器优先级，你可以給之前jsp视图解析器的值配为2 -->
+        <property name="order" value="1" />
+    </bean>
+
+ <!--   <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.apache.shiro.authz.UnauthorizedException">redirect:/err401</prop>
+                <prop key="org.apache.shiro.authz.UnauthenticatedException">redirect:/login</prop>
+            </props>
+        </property>
+    </bean>-->
+
+    <!-- 启用shrio授权注解拦截方式 -->
+  <!--  <aop:config proxy-target-class ="true"/>-->
+
+    <!--预留拦截器-->
+    <!--<bean id="authInterceptor" class=".AuthInterceptor"/>-->
+    <!--<bean id="weChatInterceptor" class="cptor.WeChatInterceptor"/>-->
+    <!--<bean id="managementInterceptor" class="cninterceptor.ManagementInterceptor"/>-->
+	<!--
+	<mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <mvc:exclude-mapping path="/contents/**"/>
+            <mvc:exclude-mapping path="/management/**"/>
+            <mvc:exclude-mapping path="/manage/**"/>
+            <mvc:exclude-mapping path="/*/wechat/**"/>
+            <ref bean="authInterceptor" />
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/*/wechat/**" />
+            <ref bean="weChatInterceptor" />
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/manage/**" />
+            <ref bean="managementInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>-->
+
+</beans>

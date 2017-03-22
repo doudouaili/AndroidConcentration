@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="AndroidConcentration:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="www.concentration.com.war">
+      <element id="artifact" artifact-name="AndroidConcentration:war exploded" />
+    </root>
+  </artifact>
+</component>
