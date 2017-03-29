@@ -25,8 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 public class UserController {
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-
-    @RequestMapping(value = "/textPost", method = RequestMethod.POST)
+ /*   @RequestMapping(value = "/textPost", method = RequestMethod.POST)
     @ResponseBody
     public JsonResult testPost(@RequestBody TestUser user) {
         System.out.println("请求了" + user.getName());
@@ -39,6 +38,6 @@ public class UserController {
         String name = httpServletRequest.getParameter("name");
         System.out.println("请求了" + name);
         return new JsonResult<Object>("用户或者密码错误", RespCode.SUCCESS);
-    }
+    }*/
 
 }

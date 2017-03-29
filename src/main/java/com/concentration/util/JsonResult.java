@@ -1,11 +1,12 @@
 package com.concentration.util;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by ali on 2017/3/22.
  */
-public class JsonResult<T> implements Serializable {
+public class JsonResult implements Serializable {
     /**
      * 是否成功
      */
@@ -18,13 +19,13 @@ public class JsonResult<T> implements Serializable {
     /**
      * 数据
      */
-    private T data;
+    private List data;
 
-    public T getData() {
+    public List  getData() {
         return data;
     }
 
-    public void setData(T data) {
+    public void setData(List  data) {
         this.data = data;
     }
 
@@ -44,7 +45,7 @@ public class JsonResult<T> implements Serializable {
         this.code = code;
     }
 
-    public JsonResult(int code, String message, T data) {
+ /*   public JsonResult(int code, String message, List  data) {
         this.data = data;
         this.message = message;
         this.code = code;
@@ -57,7 +58,7 @@ public class JsonResult<T> implements Serializable {
 
     public JsonResult(int code) {
         this.code = code;
-    }
+    }*/
 
 
 }

@@ -65,6 +65,8 @@
         <!-- 配置监控统计拦截的filters -->
         <property name="filters" value="stat"/>
     </bean>
+    <!-- 启用对事务注解的支持 -->
+
 
     <!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -111,24 +113,6 @@
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" p:basePackage="com.concentration.domain.dao"
           p:sqlSessionFactoryBeanName="sqlSessionFactory"/>
 
-    <!-- 对dataSource 数据源进行事务管理 -->
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-          p:dataSource-ref="dataSource"/>
-
-    <!-- 事务管理 通知 -->
-    <tx:advice id="txAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <!-- 对insert,update,delete 开头的方法进行事务管理,只要有异常就回滚 -->
-            <tx:method name="insert*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
-            <tx:method name="update*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
-            <tx:method name="delete*" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
-            <!-- select,count开头的方法,开启只读,提高数据库访问性能 -->
-            <tx:method name="select*" read-only="true"/>
-            <tx:method name="count*" read-only="true"/>
-            <!-- 对其他方法 使用默认的事务管理 -->
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>
 
     <!--jpa 通用 mapper-->
     <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">

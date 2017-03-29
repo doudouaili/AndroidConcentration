@@ -15,9 +15,9 @@
 
     <!-- 使Spring支持自动检测组件，如注解的 Controller -->
     <context:component-scan base-package="com.concentration.controller"/>
-    <context:component-scan base-package="com.concentration.domain"/>
-    <context:component-scan base-package="com.concentration.domain.service"/>
-    <context:component-scan base-package="com.concentration.domain.service.impl"/>
+    <!--<context:component-scan base-package="com.concentration.domain"/>-->
+    <!--<context:component-scan base-package="com.concentration.domain.service"/>-->
+    <!--<context:component-scan base-package="com.concentration.domain.service.impl"/>-->
 
     <mvc:annotation-driven />
 
@@ -132,5 +132,6 @@
             <ref bean="managementInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>-->
+    <mvc:resources mapping="/html/**" location="/html/"/>
 
 </beans>
