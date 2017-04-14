@@ -1,13 +1,7 @@
 package com.concentration.domain.dao;
 
-import com.concentration.bean.InforBean;
-import com.concentration.bean.TestInfor;
-import com.concentration.bean.TestUser;
+import com.concentration.bean.*;
 import com.concentration.domain.jpa.Infor;
-import com.concentration.bean.ExpertBean;
-import com.concentration.bean.JokeBean;
-import com.concentration.bean.WelfareBean;
-import com.concentration.bean.WorkBean;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
@@ -59,14 +53,35 @@ public interface HomeMapper extends Mapper<Infor> {
 
     @Select("select * from infor where order by infor_id  asc LIMIT #{pageStart},#{pageEnd}")
     List<InforBean> findAllInfor(@Param("pageStart") int pageStart,
-                                 @Param("pageStart") int pageEnd);
+                                 @Param("pageEnd") int pageEnd);
 
 
     @Select("select * from welfare where order by welfare_id  asc LIMIT #{pageStart},#{pageEnd}")
     List<WelfareBean> findAllWelfare(@Param("pageStart") int pageStart,
-                                     @Param("pageStart") int pageEnd);
+                                     @Param("pageEnd") int pageEnd);
 
     @Select("select * from joke where order by joke_id  asc LIMIT #{pageStart},#{pageEnd}")
     List<JokeBean> findAllJoke(@Param("pageStart") int pageStart,
-                               @Param("pageStart") int pageEnd);
+                               @Param("pageEnd") int pageEnd);
+
+    @Select("select * from comment where  infor_id=#{id} order by com_id  asc LIMIT #{pageStart},#{pageEnd}")
+    List<CommentBean> findCommAll(@Param("id") int id,
+                                  @Param("pageStart") int pageStart,
+                                  @Param("pageEnd") int pageEnd);
+
+    @Select("select * from user where user_id =#{id}")
+    UserBean findUser(@Param("id") int id);
+
+    @Select("select * from joke  order by joke_id  asc LIMIT #{pageStart},#{pageEnd}")
+    List<JokeBean> findJokeAll(@Param("pageStart") int pageStart,
+                                  @Param("pageEnd") int pageEnd);
+
+    @Select("select * from jokeCom where  joke_id=#{id} order by jokeCom_id  asc LIMIT #{pageStart},#{pageEnd}")
+    List<ComBean> findJokeCommAll(@Param("id") int id,
+                                  @Param("pageStart") int pageStart,
+                                  @Param("pageEnd") int pageEnd);
+
+    @Select("select*from joke where joke_id =#{id}")
+    JokeComBean selectJokeComOne(@Param("id") int id);
+
 }

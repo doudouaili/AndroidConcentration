@@ -11,6 +11,5 @@
     <title>测试首页</title>
 </head>
 <body>
-<img src="html/img/image1.jpg">
 </body>
 </html>

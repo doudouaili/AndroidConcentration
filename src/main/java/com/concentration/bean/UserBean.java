@@ -10,6 +10,12 @@ public class UserBean {
     private String user_phone;
 
     private String user_password;
+    private String user_photo;
+
+    private String user_name;
+
+    private String user_code;
+
 
     public int getUser_id() {
         return user_id;
@@ -59,11 +65,6 @@ public class UserBean {
         this.user_code = user_code;
     }
 
-    private String user_photo;
-
-    private String user_name;
-
-    private String user_code;
 
     public UserBean() {
 

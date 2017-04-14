@@ -1,14 +1,8 @@
 package com.concentration.domain.service.impl;
 
-import com.concentration.bean.InforBean;
-import com.concentration.bean.TestInfor;
-import com.concentration.bean.TestUser;
+import com.concentration.bean.*;
 import com.concentration.domain.dao.HomeMapper;
 import com.concentration.domain.service.IHomeService;
-import com.concentration.bean.ExpertBean;
-import com.concentration.bean.JokeBean;
-import com.concentration.bean.WelfareBean;
-import com.concentration.bean.WorkBean;
 import com.concentration.util.JsonResult;
 import org.springframework.stereotype.Repository;
 
@@ -79,11 +73,11 @@ public class HomeServiceImpl implements IHomeService {
         teacherBeen.add(expertBean);
 
         JsonResult jsonResult = new JsonResult();
-        if (expertBean!=null){
+        if (expertBean != null) {
             jsonResult.setData(teacherBeen);
             jsonResult.setCode(1);
             jsonResult.setMessage("数据查询成功~~");
-        }else {
+        } else {
             jsonResult.setData(new ArrayList());
             jsonResult.setCode(0);
             jsonResult.setMessage("没有相应数据~~");
@@ -110,4 +104,87 @@ public class HomeServiceImpl implements IHomeService {
         }
         return teacherBeen;
     }
+
+    public JsonResult inforComment(String inforIds, String pages) {
+        int page = Integer.parseInt(pages);
+        int inforId = Integer.parseInt(inforIds);
+        List<CommentBean> commAll = homeMapper.findCommAll(inforId, (page - 1) * 10, page * 10);
+
+        for (int i = 0; i < commAll.size(); i++) {
+            UserBean user = homeMapper.findUser(commAll.get(i).getUser_id());
+            commAll.get(i).setUserBean(user);
+        }
+
+        JsonResult jsonResult = new JsonResult();
+        if (commAll != null) {
+            jsonResult.setData(commAll);
+            jsonResult.setCode(1);
+            jsonResult.setMessage("数据查询成功~~");
+        } else {
+            jsonResult.setData(new ArrayList());
+            jsonResult.setCode(0);
+            jsonResult.setMessage("没有相应数据~~");
+        }
+        return jsonResult;
+    }
+
+    /**
+     * 获取所以得笑话
+     *
+     * @param pages
+     * @return
+     */
+
+    public JsonResult findJokeAll(String pages) {
+        int page = Integer.parseInt(pages);
+        List<JokeBean> jokeAll = homeMapper.findJokeAll((page - 1) * 10, page * 10);
+        JsonResult jsonResult = new JsonResult();
+        if (jokeAll.size() > 0) {
+            jsonResult.setData(jokeAll);
+            jsonResult.setCode(1);
+            jsonResult.setMessage("数据查询成功~~");
+        } else {
+            jsonResult.setData(new ArrayList());
+            jsonResult.setCode(0);
+            jsonResult.setMessage("没有相应数据~~");
+        }
+        return jsonResult;
+    }
+
+
+    /**
+     * 获取单个笑话+评论
+     *
+     * @param commentId 笑话id
+     * @param pages     评论页数
+     * @return
+     */
+    public JsonResult findJokeOne(String commentId, String pages) {
+        int page = Integer.parseInt(pages);
+        int id = Integer.parseInt(commentId);
+
+        JsonResult jsonResult = new JsonResult();
+        JokeComBean jokeBean = homeMapper.selectJokeComOne(id);
+        if (jokeBean != null) {
+            List<ComBean> jokeCommAll = homeMapper.findJokeCommAll(jokeBean.getJoke_id(), (page - 1) * 10, page * 10);
+            for (int i = 0; i < jokeCommAll.size(); i++) {
+                UserBean user = homeMapper.findUser(jokeCommAll.get(i).getUser_id());
+                jokeCommAll.get(i).setUserBean(user);
+            }
+            jokeBean.setComBean(jokeCommAll);
+
+            List<JokeComBean> list = new ArrayList<JokeComBean>();
+            list.add(jokeBean);
+            jsonResult.setData(list);
+            jsonResult.setCode(1);
+            jsonResult.setMessage("数据查询成功~~");
+        } else {
+            jsonResult.setData(new ArrayList());
+            jsonResult.setCode(0);
+            jsonResult.setMessage("没有相应数据~~");
+        }
+
+        return jsonResult;
+    }
+
 }

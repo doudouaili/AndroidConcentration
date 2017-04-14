@@ -1,12 +1,10 @@
 package com.concentration;
 
+import com.concentration.bean.*;
 import com.concentration.domain.dao.HomeMapper;
+import com.concentration.domain.dao.InvitationMapper;
 import com.concentration.domain.service.IHomeService;
 import com.concentration.domain.service.IUserService;
-import com.concentration.bean.ExpertBean;
-import com.concentration.bean.JokeBean;
-import com.concentration.bean.WelfareBean;
-import com.concentration.bean.WorkBean;
 import com.concentration.util.JsonResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,8 +34,23 @@ public class text {
     @Autowired
     HomeMapper mapper;
 
+    @Autowired
+    InvitationMapper invitationMapper;
+
     @Test
     public void show() {
+        List<InvitationBean> invitationBeen = invitationMapper.selectInvitation(0,10);
+        System.out.println(invitationBeen.size());
+
+
+      /*  JsonResult jokeOne = iHomeService.findJokeOne("11", "1");
+        int code = jokeOne.getCode();*/
+
+
+//        List<CommentBean> commAll = mapper.findCommAll(1, 1, 10);
+
+
+
 
    /*     InforBean inforBean = new InforBean();
         inforBean.setType(6);

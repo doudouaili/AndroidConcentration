@@ -12,4 +12,5 @@
     <!--     <mappers> -->
     <!--         <mapper resource="com/a/b/c/dao/BusinessInfoDaoMapper.xml" /> -->
     <!--     </mappers> -->
+    
 </configuration>

@@ -82,4 +82,51 @@ public class HomeController {
         return jsonResult;
     }
 
+    //
+
+    /**
+     * 查询资讯评论
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/InforComment", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult findComment(HttpServletRequest request) {
+        String commentId = request.getParameter("commentId");
+        String page = request.getParameter("page");
+
+        JsonResult jsonResult = iHomeService.inforComment(commentId, page);
+        return jsonResult;
+    }
+
+    /**
+     * 查询笑话
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/JokeAll", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult findJokeAll(HttpServletRequest request) {
+        String page = request.getParameter("page");
+        JsonResult jsonResult = iHomeService.findJokeAll(page);
+        return jsonResult;
+    }
+
+    /**
+     * 查询笑话单个
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/JokeOne", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult findJokeOne(HttpServletRequest request) {
+        String commentId = request.getParameter("jokeId");
+        String page = request.getParameter("page");
+        JsonResult jsonResult = iHomeService.findJokeOne(commentId, page);
+        return jsonResult;
+    }
+
 }

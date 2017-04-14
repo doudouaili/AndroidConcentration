@@ -9,6 +9,25 @@ public class JokeBean {
     private String joke_content;
     private String joke_img;
     private String joke_title;
+    private String joke_type;
+    private String joke_html;
+
+
+    public String getJoke_html() {
+        return joke_html;
+    }
+
+    public void setJoke_type(String joke_type) {
+        this.joke_type = joke_type;
+    }
+
+    public String getJoke_type() {
+        return joke_type;
+    }
+
+    public void setJoke_html(String joke_html) {
+        this.joke_html = joke_html;
+    }
 
     public int getJoke_id() {
         return joke_id;
