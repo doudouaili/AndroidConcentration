@@ -4,14 +4,16 @@ import com.concentration.bean.*;
 import com.concentration.domain.dao.HomeMapper;
 import com.concentration.domain.service.IHomeService;
 import com.concentration.util.JsonResult;
+import com.concentration.util.TimeUtil;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 首页service
+ * 文章serverImpl
  */
 @Repository
 public class HomeServiceImpl implements IHomeService {
@@ -19,171 +21,180 @@ public class HomeServiceImpl implements IHomeService {
     @Resource
     HomeMapper homeMapper;
 
-    public List<InforBean> findInforType(String type, String page) {
-        if ("".equals(type) && "".equals(page)) {
-            return null;
-        }
-        int types = Integer.parseInt(type);
-        int pages = Integer.parseInt(page);
-        TestUser testUser = new TestUser();
-        testUser.setPageEnd(10);
-        testUser.setPageStart((pages - 1) * 10);
-        testUser.setType(types);
-        return homeMapper.findInforType(testUser);
-    }
-
-    public int insertInfor(InforBean inforBean) {
-        return homeMapper.insertInfor(inforBean);
-    }
-
-    public int delectInfor(TestInfor testInfor) {
-        return homeMapper.delectInfor(testInfor);
-    }
-
-
-    public JsonResult selectHomeWord(String pages, String types) {
-        int page = Integer.parseInt(pages);
-        int type = Integer.parseInt(types);
+    public JsonResult articleTitle() {
+        List<String> list = new ArrayList<String>();
+        list.add("推荐");
+        list.add("博客");
+        list.add("问答");
+        list.add("科技");
+        list.add("技术");
         JsonResult jsonResult = new JsonResult();
-        switch (type) {
-            case 1:
-                ArrayList<WorkBean> workBeen = selectWorkAll(page);
-                jsonResult.setData(workBeen);
-                break;
-            case 2:
-                List<InforBean> allInfor = homeMapper.findAllInfor(page, (page - 1) * 10);
-                jsonResult.setData(allInfor);
-                break;
-            case 3:
-                List<WelfareBean> allWelfare = homeMapper.findAllWelfare(page, (page - 1) * 10);
-                jsonResult.setData(allWelfare);
-                break;
-            case 4:
-                List<JokeBean> allJoke = homeMapper.findAllJoke(page, (page - 1) * 10);
-                jsonResult.setData(allJoke);
-                break;
-        }
+        jsonResult.setCode(1);
+        jsonResult.setData(list);
+        jsonResult.setMessage("数据查找成功~~");
         return jsonResult;
     }
 
-    public JsonResult selectExpert(String expertId) {
-        int expert_id = Integer.parseInt(expertId);
-        ExpertBean expertBean = homeMapper.selectExpertOne(expert_id);
-        ArrayList<ExpertBean> teacherBeen = new ArrayList<ExpertBean>();
-        teacherBeen.add(expertBean);
+    public JsonResult articleInfor(int pages, int type, String phoneDDIV, int userId) {
 
         JsonResult jsonResult = new JsonResult();
-        if (expertBean != null) {
-            jsonResult.setData(teacherBeen);
+
+        if (homeMapper.selectArticleForPhone(phoneDDIV) == null) {
+            homeMapper.insertArticleNotInterested(phoneDDIV, userId);
+        }
+
+        List<InforArticleBean> iNforArticele = homeMapper.findINforArticele(type, (pages - 1) * 10, pages * 10);
+
+        if (iNforArticele != null) {
+            for (int i = 0; i < iNforArticele.size(); i++) {
+                ArticleNotInterestedBean bean = homeMapper.selectArticleForInforId(iNforArticele.get(i).getInfor_id(), phoneDDIV);
+                if (bean != null) {
+                    iNforArticele.remove(i);
+                }
+            }
+            jsonResult.setData(iNforArticele);
             jsonResult.setCode(1);
             jsonResult.setMessage("数据查询成功~~");
         } else {
             jsonResult.setData(new ArrayList());
             jsonResult.setCode(0);
-            jsonResult.setMessage("没有相应数据~~");
+            jsonResult.setMessage("没有更多数据~~");
         }
+
         return jsonResult;
     }
 
-    private ArrayList<WorkBean> selectWorkAll(int page) {
-        ArrayList<WorkBean> teacherBeen = new ArrayList<WorkBean>();
+    public JsonResult articleInforPraise(int inforId, int userId, int statein, int clType) {
+        JsonResult jsonResult = new JsonResult();
+        int inforType = homeMapper.findInforType(inforId);
+        String systemTiem = TimeUtil.getSystemTiem();
+        int praiseState = 0;
+        int collectState = 0;
+        if (clType == 0) { //点赞
+            PraiseBean inforPraiseForUserId = homeMapper.findInforPraiseForUserId(inforId, userId);
+            if (inforPraiseForUserId != null) {//存在
+                praiseState = homeMapper.upadteInforPraise(inforId, userId, inforType, statein, systemTiem, inforPraiseForUserId.getPraise_id());
+            } else {
+                praiseState = homeMapper.insertInforPraise(inforId, userId, inforType, statein, systemTiem);
+            }
 
-        for (int i = page; i < page + 10; i++) {
-            WorkBean workBean = homeMapper.selectWorkOne(i);
-            if (workBean != null) {
-                com.concentration.test.InforBean inforBean = homeMapper.selectInforOne(workBean.getWork_type());
-                workBean.setInforBean(inforBean);
-                WelfareBean welfareBean = homeMapper.selectWelfareOne(workBean.getWork_type());
-                workBean.setWelfareBean(welfareBean);
-                JokeBean jokeBean = homeMapper.selectJokeOne(workBean.getWork_type());
-                workBean.setJokeBean(jokeBean);
-                ExpertBean expertBean = homeMapper.selectExpertOne(workBean.getWork_type());
-                workBean.setExpertBean(expertBean);
-                teacherBeen.add(workBean);
+            if (praiseState > 0) {
+                jsonResult.setData(new ArrayList());
+                jsonResult.setCode(1);
+                if (statein == 0) {
+                    jsonResult.setMessage("取消成功~~");
+                } else {
+                    jsonResult.setMessage("点赞成功~~");
+                }
+
+            } else {
+                jsonResult.setData(new ArrayList());
+                jsonResult.setCode(1);
+                jsonResult.setMessage("点赞失败~~");
+            }
+        } else {//收藏
+
+            CollectBean collectBean = homeMapper.findInforCollectForUserId(inforId, userId);
+            if (collectBean != null) {//存在
+                collectState = homeMapper.upadteInforCollect(inforId, userId, inforType, statein, systemTiem, collectBean.getCollect_id());
+            } else {
+                collectState = homeMapper.insertInforCollect(inforId, userId, inforType, statein, systemTiem);
+            }
+
+            if (collectState > 0) {
+                jsonResult.setData(new ArrayList());
+                jsonResult.setCode(1);
+                if (statein == 1) {
+                    jsonResult.setMessage("收藏成功~~");
+                } else {
+                    jsonResult.setMessage("取消成功~~");
+                }
+            } else {
+                jsonResult.setData(new ArrayList());
+                jsonResult.setCode(0);
+                jsonResult.setMessage("参数异常~~");
             }
         }
-        return teacherBeen;
-    }
-
-    public JsonResult inforComment(String inforIds, String pages) {
-        int page = Integer.parseInt(pages);
-        int inforId = Integer.parseInt(inforIds);
-        List<CommentBean> commAll = homeMapper.findCommAll(inforId, (page - 1) * 10, page * 10);
-
-        for (int i = 0; i < commAll.size(); i++) {
-            UserBean user = homeMapper.findUser(commAll.get(i).getUser_id());
-            commAll.get(i).setUserBean(user);
-        }
-
-        JsonResult jsonResult = new JsonResult();
-        if (commAll != null) {
-            jsonResult.setData(commAll);
-            jsonResult.setCode(1);
-            jsonResult.setMessage("数据查询成功~~");
-        } else {
-            jsonResult.setData(new ArrayList());
-            jsonResult.setCode(0);
-            jsonResult.setMessage("没有相应数据~~");
-        }
         return jsonResult;
     }
 
-    /**
-     * 获取所以得笑话
-     *
-     * @param pages
-     * @return
-     */
-
-    public JsonResult findJokeAll(String pages) {
-        int page = Integer.parseInt(pages);
-        List<JokeBean> jokeAll = homeMapper.findJokeAll((page - 1) * 10, page * 10);
+    public JsonResult articleNot(String phoneDDIV, int userId, int inforId, String cancelConetent) {
         JsonResult jsonResult = new JsonResult();
-        if (jokeAll.size() > 0) {
-            jsonResult.setData(jokeAll);
-            jsonResult.setCode(1);
-            jsonResult.setMessage("数据查询成功~~");
-        } else {
-            jsonResult.setData(new ArrayList());
-            jsonResult.setCode(0);
-            jsonResult.setMessage("没有相应数据~~");
-        }
-        return jsonResult;
-    }
-
-
-    /**
-     * 获取单个笑话+评论
-     *
-     * @param commentId 笑话id
-     * @param pages     评论页数
-     * @return
-     */
-    public JsonResult findJokeOne(String commentId, String pages) {
-        int page = Integer.parseInt(pages);
-        int id = Integer.parseInt(commentId);
-
-        JsonResult jsonResult = new JsonResult();
-        JokeComBean jokeBean = homeMapper.selectJokeComOne(id);
-        if (jokeBean != null) {
-            List<ComBean> jokeCommAll = homeMapper.findJokeCommAll(jokeBean.getJoke_id(), (page - 1) * 10, page * 10);
-            for (int i = 0; i < jokeCommAll.size(); i++) {
-                UserBean user = homeMapper.findUser(jokeCommAll.get(i).getUser_id());
-                jokeCommAll.get(i).setUserBean(user);
+        if (phoneDDIV != null && cancelConetent != null) {
+            int tag = 0;
+            ArticleNotInterestedBean bean = homeMapper.selectArticleForPhone(phoneDDIV);
+            if (bean != null) {
+                tag = homeMapper.upadteArticle(phoneDDIV, userId, inforId, cancelConetent, bean.getNia_id());
+            } else {
+                tag = homeMapper.insertArticleNotInterestedAll(phoneDDIV, userId, inforId, cancelConetent);
             }
-            jokeBean.setComBean(jokeCommAll);
+            if (tag > 0) {
+                jsonResult.setData(new ArrayList());
+                jsonResult.setCode(1);
+                jsonResult.setMessage("不在推送此类信息~~");
+            } else {
+                jsonResult.setData(new ArrayList());
+                jsonResult.setCode(0);
+                jsonResult.setMessage("参数异常~~");
+            }
 
-            List<JokeComBean> list = new ArrayList<JokeComBean>();
-            list.add(jokeBean);
-            jsonResult.setData(list);
-            jsonResult.setCode(1);
-            jsonResult.setMessage("数据查询成功~~");
         } else {
             jsonResult.setData(new ArrayList());
             jsonResult.setCode(0);
-            jsonResult.setMessage("没有相应数据~~");
+            jsonResult.setMessage("参数异常~~");
+        }
+        return jsonResult;
+    }
+
+    public JsonResult articleAddLookNum(int infor_id, int status) {
+        JsonResult jsonResult = new JsonResult();
+        if (status == 0) {
+            int i = homeMapper.selectInforLookNum(infor_id);
+            int i1 = homeMapper.updateAddLookNum(infor_id, i + 1);
+            if (i1 > 0) {
+                jsonResult.setData(new ArrayList());
+                jsonResult.setCode(1);
+                jsonResult.setMessage("修改成功~~");
+            } else {
+                jsonResult.setData(new ArrayList());
+                jsonResult.setCode(0);
+                jsonResult.setMessage("修改失败~~");
+            }
+        }
+        return jsonResult;
+    }
+
+    public JsonResult articleInforCom(int inforId, int userId, int page) {
+
+        JsonResult jsonResult = new JsonResult();
+        ComBean comBean = new ComBean();
+
+        PraiseBean inforPraiseForUserId = homeMapper.findInforPraiseForUserId(inforId, userId);//收藏
+
+        if (inforPraiseForUserId != null) {
+            comBean.setIsPraise(Integer.parseInt(inforPraiseForUserId.getPraise_state()));
+        } else {
+            comBean.setIsPraise(0);
         }
 
+        CollectBean inforCollectForUserId = homeMapper.findInforCollectForUserId(inforId, userId);//点赞
+
+        if (inforCollectForUserId != null) {
+            comBean.setIsCollect(Integer.parseInt(inforPraiseForUserId.getPraise_state()));
+        } else {
+            comBean.setIsCollect(0);
+        }
+
+        List<CommentBean> commentBeen = homeMapper.selectInforCom(inforId, (page - 1) * 10, page * 10);
+
+
+        comBean.setCommentBeanList(commentBeen);
+        List<ComBean> comBeen = new ArrayList<ComBean>();
+
+        comBeen.add(comBean);
+        jsonResult.setData(comBeen);
+        jsonResult.setCode(1);
+        jsonResult.setMessage("数据查询成功~~");
         return jsonResult;
     }
 

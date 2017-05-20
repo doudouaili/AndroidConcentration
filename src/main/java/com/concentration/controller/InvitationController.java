@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by ali on 2017/4/13.
+ * 猿圈
  */
 @RequestMapping("/invitation")
 @Controller

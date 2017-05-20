@@ -19,11 +19,11 @@
     <!--<context:component-scan base-package="com.concentration.domain.service"/>-->
     <!--<context:component-scan base-package="com.concentration.domain.service.impl"/>-->
 
-    <mvc:annotation-driven />
+    <mvc:annotation-driven/>
 
     <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
-        <!--<property name="prefix" value="/WEB-INF/pages/"/>-->
-        <!--<property name="suffix" value=".ftl"/>-->
+    <!--<property name="prefix" value="/WEB-INF/pages/"/>-->
+    <!--<property name="suffix" value=".ftl"/>-->
     <!--</bean>-->
 
     <!-- 设置上传文件的最大尺寸为10MB -->
@@ -60,16 +60,16 @@
 
     <!-- 配置Freemarker屬性文件路徑 -->
     <!--<bean id="freemarkerConfiguration"        class="org.springframework.beans.factory.config.PropertiesFactoryBean">-->
-        <!--<property name="location" value="classpath:conf/freemarker.properties" />-->
+    <!--<property name="location" value="classpath:conf/freemarker.properties" />-->
     <!--</bean>-->
 
     <!-- 配置freeMarker模板加載地址 -->
-    <bean id="freemarkerConfig"        class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
         <!-- 視圖解析器會在/WEB-INF/ftl/路徑下掃描視圖文件 -->
-        <property name="templateLoaderPath" value="classpath:/html/" />
+        <property name="templateLoaderPath" value="classpath:/html/"/>
         <property name="freemarkerVariables">
             <map>
-                <entry key="xml_escape" value-ref="fmXmlEscape" />
+                <entry key="xml_escape" value-ref="fmXmlEscape"/>
             </map>
         </property>
         <property name="freemarkerSettings">
@@ -83,38 +83,38 @@
             </props>
         </property>
     </bean>
-    <bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape" />
+    <bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape"/>
     <!-- 配置 freemakerView 解析器 -->
-    <bean id="freemakerViewResolver"        class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
-        <property name="viewClass"        value="org.springframework.web.servlet.view.freemarker.FreeMarkerView" />
+    <bean id="freemakerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>
         <!-- 扫描ftl 文件 -->
-        <property name="contentType" value="text/html; charset=UTF-8" />
-        <property name="exposeRequestAttributes" value="true" />
-        <property name="exposeSessionAttributes" value="true" />
-        <property name="exposeSpringMacroHelpers" value="true" />
-        <property name="requestContextAttribute" value="request" />
+        <property name="contentType" value="text/html; charset=UTF-8"/>
+        <property name="exposeRequestAttributes" value="true"/>
+        <property name="exposeSessionAttributes" value="true"/>
+        <property name="exposeSpringMacroHelpers" value="true"/>
+        <property name="requestContextAttribute" value="request"/>
         <!-- 给视图解析器优先级，你可以給之前jsp视图解析器的值配为2 -->
-        <property name="order" value="1" />
+        <property name="order" value="1"/>
     </bean>
 
- <!--   <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-        <property name="exceptionMappings">
-            <props>
-                <prop key="org.apache.shiro.authz.UnauthorizedException">redirect:/err401</prop>
-                <prop key="org.apache.shiro.authz.UnauthenticatedException">redirect:/login</prop>
-            </props>
-        </property>
-    </bean>-->
+    <!--   <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+           <property name="exceptionMappings">
+               <props>
+                   <prop key="org.apache.shiro.authz.UnauthorizedException">redirect:/err401</prop>
+                   <prop key="org.apache.shiro.authz.UnauthenticatedException">redirect:/login</prop>
+               </props>
+           </property>
+       </bean>-->
 
     <!-- 启用shrio授权注解拦截方式 -->
-  <!--  <aop:config proxy-target-class ="true"/>-->
+    <!--  <aop:config proxy-target-class ="true"/>-->
 
     <!--预留拦截器-->
     <!--<bean id="authInterceptor" class=".AuthInterceptor"/>-->
     <!--<bean id="weChatInterceptor" class="cptor.WeChatInterceptor"/>-->
     <!--<bean id="managementInterceptor" class="cninterceptor.ManagementInterceptor"/>-->
-	<!--
-	<mvc:interceptors>
+    <!--
+    <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/**" />
             <mvc:exclude-mapping path="/contents/**"/>

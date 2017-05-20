@@ -21,6 +21,7 @@ public class JsonResult implements Serializable {
      */
     private List data;
 
+
     public List  getData() {
         return data;
     }

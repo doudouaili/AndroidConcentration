@@ -19,8 +19,8 @@ public class MessageServiceImpl implements IMessageService {
     MessageMapper messageMapper;
 
     public JsonResult selectMessageAll() {
-        List<MessageBean> messageBeen = messageMapper.selectMessageAll();
 
+        List<MessageBean> messageBeen = messageMapper.selectMessageAll();
         JsonResult jsonResult = new JsonResult();
         if (messageBeen != null) {
             jsonResult.setData(messageBeen);

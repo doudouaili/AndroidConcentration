@@ -1,21 +1,19 @@
 package com.concentration.controller;
 
-import com.concentration.bean.InforBean;
+import com.concentration.bean.*;
 import com.concentration.domain.service.IHomeService;
-import com.concentration.bean.WorkBean;
 import com.concentration.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * 首页接口
+ * 文章接口
  */
 @RequestMapping("/concentrantion")
 @Controller
@@ -27,106 +25,91 @@ public class HomeController {
     /**
      * 首页标题
      *
-     * @param request
      * @return
      */
-    @RequestMapping(value = "/LayoutTitle", method = RequestMethod.POST)
+    @RequestMapping(value = "/articletitle", method = RequestMethod.GET)
     @ResponseBody
-    public JsonResult layoutTitlePost(HttpServletRequest request) {
-
-        List<String> list = new ArrayList<String>();
-        list.add("最热");
-        list.add("资讯");
-        list.add("笑话");
-        list.add("福利");
-        JsonResult jsonResult = new JsonResult();
-        jsonResult.setCode(1);
-        jsonResult.setData(list);
-        jsonResult.setMessage("数据查找成功~~");
+    public JsonResult articleTitle() {
+        JsonResult jsonResult = iHomeService.articleTitle();
         return jsonResult;
     }
 
-
     /**
-     * @param request
+     * @param json page:页数
+     *             type:类型
+     *             资讯:1
+     *             博客:2
+     *             问答:3
+     *             科技:4
+     *             技术:5
+     *             phoneDDIV:手机的唯一标示
+     *             userId:用户id
+     * @return
      */
-    @RequestMapping(value = "/Infor", method = RequestMethod.POST)
+    @RequestMapping(value = "/articleinfor", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult inforPost(HttpServletRequest request) {
-        String page = request.getParameter("page");//页数
-        String type = request.getParameter("type");
-
-        JsonResult jsonResult = iHomeService.selectHomeWord(page, type);
-        if (null == jsonResult) {
-            jsonResult.setCode(0);
-            jsonResult.setData(new ArrayList<InforBean>());
-            jsonResult.setMessage("没有相应数据~~");
-        } else {
-            jsonResult.setCode(1);
-            jsonResult.setMessage("数据查找成功~~");
-        }
+    public JsonResult articleInfor(@RequestBody ArticleinforJson json) {
+        JsonResult jsonResult = iHomeService.articleInfor(json.getPage(), json.getType(), json.getPhoneDDIV(), json.getUserId());
         return jsonResult;
     }
 
     /**
-     * 查询专家
+     * 文章评论
      *
-     * @param request 专家id
+     * @param json
      * @return
      */
-    @RequestMapping(value = "/FindExpert", method = RequestMethod.POST)
+    @RequestMapping(value = "/articleinfor/com", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult selectExpert(HttpServletRequest request) {
-        String expertId = request.getParameter("expertId");
-        JsonResult jsonResult = iHomeService.selectExpert(expertId);
-        return jsonResult;
-    }
-
-    //
-
-    /**
-     * 查询资讯评论
-     *
-     * @param
-     * @return
-     */
-    @RequestMapping(value = "/InforComment", method = RequestMethod.POST)
-    @ResponseBody
-    public JsonResult findComment(HttpServletRequest request) {
-        String commentId = request.getParameter("commentId");
-        String page = request.getParameter("page");
-
-        JsonResult jsonResult = iHomeService.inforComment(commentId, page);
+    public JsonResult articleInforCom(@RequestBody InforComJson json) {
+        JsonResult jsonResult = iHomeService.articleInforCom(json.getInforId(), json.getUserId(), json.getPage());
         return jsonResult;
     }
 
     /**
-     * 查询笑话
-     *
-     * @param
-     * @return
+     * 点赞/收藏
+     * infor_id:文章id
+     * user_id:用户id
+     * state:点赞状态(0取消点赞,1点赞)
+     * type:点赞0,收藏1
      */
-    @RequestMapping(value = "/JokeAll", method = RequestMethod.POST)
+    @RequestMapping(value = "/articleinfor/praisecollect", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult findJokeAll(HttpServletRequest request) {
-        String page = request.getParameter("page");
-        JsonResult jsonResult = iHomeService.findJokeAll(page);
+    public JsonResult articleInforPraise(@RequestBody ArticleInforPraiseJson json) {
+        JsonResult jsonResult = iHomeService.articleInforPraise(json.getInfor_id(), json.getUser_id(), json.getState(), json.getType());
         return jsonResult;
     }
+
 
     /**
-     * 查询笑话单个
+     * 对资讯不兴趣
      *
-     * @param
+     * @param json phoneDDIV  手机标识
+     *             userId   用户id
+     *             inforId  资讯id
+     *             cancelConetent  取消内容
      * @return
      */
-    @RequestMapping(value = "/JokeOne", method = RequestMethod.POST)
+    @RequestMapping(value = "/articleinfor/cancelinfor", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult findJokeOne(HttpServletRequest request) {
-        String commentId = request.getParameter("jokeId");
-        String page = request.getParameter("page");
-        JsonResult jsonResult = iHomeService.findJokeOne(commentId, page);
+    public JsonResult articleNot(@RequestBody ArticleNotJson json) {
+        JsonResult jsonResult = iHomeService.articleNot(json.getPhoneDDIV(), json.getUserId(), json.getInforId(), json.getCancelConetent());
         return jsonResult;
     }
 
+
+    /**
+     * 文章增加浏览数
+     *
+     * @param json infor_id 资讯id
+     *             status  状态:0=浏览 1=其他
+     * @return
+     */
+    @RequestMapping(value = "/articleinfor/addlook", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult articleAddLookNum(@RequestBody AddLookInforNumJson json) {
+        JsonResult jsonResult = iHomeService.articleAddLookNum(json.getInfor_id(), json.getStatus());
+        return jsonResult;
+    }
+    
 }

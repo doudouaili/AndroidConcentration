@@ -1,70 +1,38 @@
 package com.concentration.bean;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * Created by ali on 2017/3/30.
  */
-public class ComBean {
-    private int jokeCom_id;
-    private int joke_id;
-    private int user_id;
-    private int jokeCom_type;
-    private String jokeCom_time;
-    private String jokeCom_content;
-    private UserBean userBean;
+public class ComBean implements Serializable{
+    private int isCollect;
+    private int isPraise;
+    private List<CommentBean> commentBeanList;
 
-    public int getJokeCom_id() {
-        return jokeCom_id;
+    public int getIsCollect() {
+        return isCollect;
     }
 
-    public void setJokeCom_id(int jokeCom_id) {
-        this.jokeCom_id = jokeCom_id;
+    public void setIsCollect(int isCollect) {
+        this.isCollect = isCollect;
     }
 
-    public int getJoke_id() {
-        return joke_id;
+    public int getIsPraise() {
+        return isPraise;
     }
 
-    public void setJoke_id(int joke_id) {
-        this.joke_id = joke_id;
+    public void setIsPraise(int isPraise) {
+        this.isPraise = isPraise;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public List<CommentBean> getCommentBeanList() {
+        return commentBeanList;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
-    }
-
-    public int getJokeCom_type() {
-        return jokeCom_type;
-    }
-
-    public void setJokeCom_type(int jokeCom_type) {
-        this.jokeCom_type = jokeCom_type;
-    }
-
-    public String getJokeCom_time() {
-        return jokeCom_time;
-    }
-
-    public void setJokeCom_time(String jokeCom_time) {
-        this.jokeCom_time = jokeCom_time;
-    }
-
-    public String getJokeCom_content() {
-        return jokeCom_content;
-    }
-
-    public void setJokeCom_content(String jokeCom_content) {
-        this.jokeCom_content = jokeCom_content;
-    }
-
-    public UserBean getUserBean() {
-        return userBean;
-    }
-
-    public void setUserBean(UserBean userBean) {
-        this.userBean = userBean;
+    public void setCommentBeanList(List<CommentBean> commentBeanList) {
+        this.commentBeanList = commentBeanList;
     }
 }
+

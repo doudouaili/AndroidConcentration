@@ -10,6 +10,10 @@ import java.util.List;
  */
 public interface IMessageService {
 
+    /**
+     * 获取消息列表
+     * @return
+     */
     JsonResult selectMessageAll();
 
 }

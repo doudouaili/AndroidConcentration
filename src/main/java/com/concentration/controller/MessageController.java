@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
+
 /**
- * Created by ali on 2017/4/13.
+ * 消息
  */
 @RequestMapping("/message")
 @Controller
@@ -20,9 +21,14 @@ public class MessageController {
     @Autowired
     IMessageService iMessageService;
 
-    @RequestMapping(value = "/message", method = RequestMethod.POST)
+    /**
+     * 获取消息列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/message", method = RequestMethod.GET)
     @ResponseBody
-    public JsonResult seleMssage(HttpServletRequest request) {
+    public JsonResult seleMssage() {
         JsonResult jsonResult = iMessageService.selectMessageAll();
         return jsonResult;
     }

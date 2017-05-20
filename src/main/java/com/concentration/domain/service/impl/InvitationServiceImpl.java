@@ -19,19 +19,27 @@ public class InvitationServiceImpl implements IInvitationService {
     InvitationMapper invitationMapper;
 
     public JsonResult selectInvitationAll(String pages) {
-        int page = Integer.parseInt(pages);
-        List<InvitationBean> invitationBeen = invitationMapper.selectInvitation((page - 1) * 10, page * 10);
-
         JsonResult jsonResult = new JsonResult();
-        if (invitationBeen != null) {
-            jsonResult.setData(invitationBeen);
-            jsonResult.setCode(1);
-            jsonResult.setMessage("数据查询成功~~");
-        } else {
+        if (pages!=null){
+            int page = Integer.parseInt(pages);
+            List<InvitationBean> invitationBeen = invitationMapper.selectInvitation((page - 1) * 10, page * 10);
+
+
+            if (invitationBeen != null) {
+                jsonResult.setData(invitationBeen);
+                jsonResult.setCode(1);
+                jsonResult.setMessage("数据查询成功~~");
+            } else {
+                jsonResult.setData(new ArrayList());
+                jsonResult.setCode(0);
+                jsonResult.setMessage("没有相应数据~~");
+            }
+        }else {
             jsonResult.setData(new ArrayList());
             jsonResult.setCode(0);
             jsonResult.setMessage("没有相应数据~~");
         }
+
         return jsonResult;
     }
 }
